@@ -1,3 +1,9 @@
+# waifu2x-caffe (for Arch)
+
+waifu2x-caffe for Arch. It's adapted from https://github.com/nagadomi/waifu2x-caffe-ubuntu.
+Currently working with Cuda 11.2.67, CUDNN 8.1.0.77-1, and OPENCV4.
+See `INSTALL-linux.md`.
+
 waifu2x-caffe (for Windows)
 ----------
 

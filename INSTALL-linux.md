@@ -1,10 +1,13 @@
-# Build on Ubuntu 16.04
+# Build on Arch
+
+## Packges to install
+cuda, cudnn, opencv, boost, gflags, google-glog, leveldb, cmake, protobuf, lmdb, python-numpy, hdf5
 
 ## Build caffe for waifu2x-caffe
 
 ```
-git clone -b waifu2x-caffe-ubuntu https://github.com/nagadomi/caffe.git lltcggie-caffe
-cd lltcggie-caffe
+git clone https://github.com/Gin-no-kami/caffe.git caffe
+cd caffe
 cp Makefile.config.example-ubuntu Makefile.config
 # edit Makefile.config
 make
@@ -14,27 +17,32 @@ When using cuDNN, set `USE_CUDNN := 1` in `Makefile.config`.
 
 ## Build waifu2x-caffe
 
-(I tested on Ubuntu18.04 + CUDA10.1 + CuDNN 7.5 + GTX 1080)
+(I tested using CUDA11.1 + CuDNN 8.0 + RTX3080)
 
 ```sh
-git clone -b ubuntu https://github.com/nagadomi/waifu2x-caffe.git
+git clone https://github.com/Gin-no-kami/waifu2x-caffe.git
 cd waifu2x-caffe
 git submodule update --init --recursive
 
-# create symlink to ltcggie-caffe
-ln -s ../lltcggie-caffe ./caffe
-ln -s ../lltcggie-caffe ./libcaffe
+# create symlink to caffe
+ln -s ../caffe ./caffe
+ln -s ../caffe ./libcaffe
 
-# build
+# cmake
 rm -fr build # clean
 mkdir build
 cd build
-cmake .. -DCUDA_NVCC_FLAGS="-D_FORCE_INLINES  -gencode arch=compute_61,code=sm_61 " # sm_61 is for GTX1080
+cmake .. -DCUDA_NVCC_FLAGS="-D_FORCE_INLINES  -gencode arch=compute_86,code=sm_86 " # sm_86 is for RTX3080
+# Edit the file build/libcaffe/src/caffe/CMakeFiles/caffe.dir/flags.make, removing from the CUDA_FLAGS variable.
+# If you know how to alter cmake to not put these in there let me know and I will update the cmake file
+-Xcudafe --diag_suppress=set_but_not_used -DBOOST_ALL_NO_LIB;-DUSE_LMDB;-DUSE_LEVELDB;-DUSE_CUDNN;-DUSE_OPENCV;-DWITH_PYTHON_LAYER
+
+# build
 make
 ln -s `realpath ./waifu2x-caffe` ../bin
 ```
 
-When you got `cuDNN Not Found` issue,
+If you got `cuDNN Not Found` issue,
 ```
 cuDNN             :   Not Found
 ```
